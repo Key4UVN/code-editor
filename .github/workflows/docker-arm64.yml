@@ -51,5 +51,10 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            NEXT_PUBLIC_APP_BASE_URL=${{ secrets.NEXT_PUBLIC_APP_BASE_URL }}
+            NEXT_PUBLIC_VNP_API=${{ secrets.NEXT_PUBLIC_VNP_API }}
+            NEXT_PUBLIC_VNP_RETURNURL=${{ secrets.NEXT_PUBLIC_VNP_RETURNURL }}
+            NEXT_PUBLIC_VNP_TMNCODE=${{ secrets.NEXT_PUBLIC_VNP_TMNCODE }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
