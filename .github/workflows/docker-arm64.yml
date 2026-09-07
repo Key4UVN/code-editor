@@ -42,6 +42,36 @@ jobs:
             type=ref,event=tag
             type=sha,prefix=sha-
 
+      - name: Validate build URLs
+        env:
+          NEXT_PUBLIC_APP_BASE_URL: ${{ secrets.NEXT_PUBLIC_APP_BASE_URL }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+        run: |
+          node <<'NODE'
+          const names = ['NEXT_PUBLIC_APP_BASE_URL', 'NEXTAUTH_URL']
+          let invalid = false
+
+          for (const name of names) {
+            const value = process.env[name]?.trim()
+
+            if (!value) {
+              console.error(`::error::${name} is empty or unavailable`)
+              invalid = true
+              continue
+            }
+
+            try {
+              new URL(value)
+              console.log(`${name}: configured and valid`)
+            } catch {
+              console.error(`::error::${name} is not an absolute URL`)
+              invalid = true
+            }
+          }
+
+          if (invalid) process.exit(1)
+          NODE
+
       - name: Build and push ARM64 image
         uses: docker/build-push-action@v6
         with:
@@ -53,6 +83,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             NEXT_PUBLIC_APP_BASE_URL=${{ secrets.NEXT_PUBLIC_APP_BASE_URL }}
+            NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
             NEXT_PUBLIC_VNP_API=${{ secrets.NEXT_PUBLIC_VNP_API }}
             NEXT_PUBLIC_VNP_RETURNURL=${{ secrets.NEXT_PUBLIC_VNP_RETURNURL }}
             NEXT_PUBLIC_VNP_TMNCODE=${{ secrets.NEXT_PUBLIC_VNP_TMNCODE }}
