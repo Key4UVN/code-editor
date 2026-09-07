@@ -4,13 +4,15 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '../../../utils/auth'
 import User from '../../../modules/mongo/schema/User'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(req: NextRequest) {
-    await connectToDb()
-    const session = await getServerSession(authOptions)
+	await connectToDb()
+	const session = await getServerSession(authOptions)
 
-    const emailQuery = req.nextUrl.searchParams.get('email') ? req.nextUrl.searchParams.get('email')! : ''
+	const emailQuery = req.nextUrl.searchParams.get('email') ? req.nextUrl.searchParams.get('email')! : ''
 
-    const users = await User.findByEmail(emailQuery)
+	const users = await User.findByEmail(emailQuery)
 
-    return Response.json(users)
+	return Response.json(users)
 }
