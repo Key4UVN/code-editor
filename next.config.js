@@ -67,6 +67,9 @@ const nextConfig = {
 	experimental: {
 		serverActions: {
 			bodySizeLimit: '1024mb',
+			allowedOrigins: [
+				"https://*.letranglan.top",
+			]
 		},
 	},
 }
